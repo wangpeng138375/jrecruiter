@@ -142,7 +142,7 @@ public class UploadFilesController extends SimpleFormController {
             errors.rejectValue("file", "errors.upload.size.exceeded",
                     null,
                     "bundle errors.upload.size.exceeded not found");
-            LOGGER.warn(e); multipartRequest.getFileMap();
+            LOGGER.warn(e);  
             return showForm(request, errors, getFormView());
 
         }

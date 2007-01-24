@@ -78,7 +78,7 @@
 	            </div>
 	                
 	        </div>
-	        <div id="footer">Gunnar Hillert, 2006 - <a href="http://www.hillert.com">www.hillert.com</a></div>
+	        <div id="footer">Gunnar Hillert, 2007 - <a href="http://www.hillert.com">www.hillert.com</a></div>
         </form:form>
 	</body>
 </html>
