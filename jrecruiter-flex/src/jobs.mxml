@@ -17,10 +17,6 @@
     		
     		import mx.controls.Label;
             import mx.containers.TitleWindow;
-
-			import org.hasseg.externalMouseWheel.ExternalMouseWheelSupport;
-			
-			private var _mwSupport:ExternalMouseWheelSupport = null;
 			
             private function applicationCompleteHandler(event:Event):void {
 				
