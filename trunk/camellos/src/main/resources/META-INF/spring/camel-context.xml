@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:camel="http://camel.apache.org/schema/spring"
+    xmlns:ftpserver="http://mina.apache.org/ftpserver/spring/v1"
+    xmlns:amq="http://activemq.apache.org/schema/core"
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+       http://mina.apache.org/ftpserver/spring/v1 http://mina.apache.org/ftpserver/ftpserver-1.0.xsd
+       http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.2.0.xsd">
+
+  <amq:broker id="broker" useJmx="false" persistent="false" >
+    <amq:transportConnectors>
+      <amq:transportConnector uri="tcp://localhost:0" />
+    </amq:transportConnectors>
+  </amq:broker>
+
+
+      <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
+        <property name="brokerURL" value="vm://localhost"/>
+      </bean>
+
+    <ftpserver:server id="ftpServer" max-logins="10"
+        anon-enabled="true" max-anon-logins="5" max-login-failures="3"
+        login-failure-delay="20">
+        <ftpserver:listeners>
+            <ftpserver:nio-listener name="default" port="3333" local-address="localhost"/>
+        </ftpserver:listeners>
+        <ftpserver:file-user-manager file="classpath:users.properties" encrypt-passwords="clear" />
+    </ftpserver:server>
+
+    <camel:camelContext shouldStartContext="true" trace="true">
+        <camel:package>com.hillert.camellos</camel:package>
+        <camel:route id="route1">
+            <camel:from uri="file:camellos/inbox?move=.done" />
+            <camel:throttle maximumRequestsPerPeriod="1" timePeriodMillis="10000"  >
+            <camel:to uri="activemq:queue:camellos"/>
+            </camel:throttle>
+        </camel:route>
+        <camel:route id="route2">
+            <camel:from uri="activemq:queue:camellos" />
+            <camel:to uri="ftp://admin@localhost:3333?password=secret"/>
+        </camel:route>
+    </camel:camelContext>
+</beans>
