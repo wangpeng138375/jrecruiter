@@ -42,5 +42,19 @@
             <camel:from uri="activemq:queue:camellos" />
             <camel:to uri="ftp://admin@localhost:3333?password=secret"/>
         </camel:route>
+
+        <camel:route id="zipRoute">
+            <camel:from uri="file:camellos/zip-input?move=.done" />
+            <camel:marshal ref="zip"/>
+            <camel:to uri="file:camellos/zip-output?fileName=${file:name}_[${date:now:yyyyMMdd}].zip"/>
+        </camel:route>
+        <camel:route id="unzipRoute">
+            <camel:from uri="file:camellos/unzip-input?move=.done" />
+            <camel:unmarshal ref="zip"/>
+            <camel:to uri="file:camellos/unzip-output?fileName=${file:name}"/>
+        </camel:route>
     </camel:camelContext>
+
+    <bean id="zip" class="com.hillert.camellos.dataformat.CustomizedZipDataFormat"/>
+
 </beans>
