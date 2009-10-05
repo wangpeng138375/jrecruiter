@@ -12,8 +12,6 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.component.file.GenericFile;
-import org.apache.camel.component.file.GenericFileMessage;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
@@ -79,10 +77,14 @@ public class CustomizedZipDataFormat implements DataFormat {
             final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
 
+
             try {
 
-                while (unzipInput.getNextEntry() != null) {
+                ZipEntry zipEntry = unzipInput.getNextEntry();
 
+                while (zipEntry != null) {
+
+                    exchange.getOut().setHeader(Exchange.FILE_NAME, zipEntry.getName());
                     if (i > 1) {
                         throw new IllegalStateException("Zip file has more than 1 file entry.");
                     }
@@ -90,7 +92,7 @@ public class CustomizedZipDataFormat implements DataFormat {
                     IOHelper.copy(unzipInput, bos);
 
                     i++;
-
+                    zipEntry = unzipInput.getNextEntry();
                 }
 
                 return bos.toByteArray();
