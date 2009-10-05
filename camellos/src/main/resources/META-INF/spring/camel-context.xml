@@ -31,6 +31,11 @@
     </ftpserver:server>
 
     <camel:camelContext shouldStartContext="true" trace="true">
+      <camel:properties>
+           <camel:property key="CamelLogDebugBodyMaxChars" value="50"/>
+      </camel:properties>
+
+
         <camel:package>com.hillert.camellos</camel:package>
         <camel:route id="route1">
             <camel:from uri="file:camellos/inbox?move=.done" />
@@ -51,7 +56,7 @@
         <camel:route id="unzipRoute">
             <camel:from uri="file:camellos/unzip-input?move=.done" />
             <camel:unmarshal ref="zip"/>
-            <camel:to uri="file:camellos/unzip-output?fileName=${file:name}"/>
+            <camel:to uri="file:camellos/unzip-output"/>
         </camel:route>
     </camel:camelContext>
 
